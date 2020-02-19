@@ -118,7 +118,8 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
-        visited = {}  # Note that this is a dictionary, not a set
+        # Initialize an empty dictionary and assign to connections
+        connections = {}  
         # Initialize an empty queue and assign to q
         q = Queue()
         # Add a [path] to the user id in the queue
@@ -129,22 +130,22 @@ class SocialGraph:
             path = q.dequeue()
             # Assign the last user added('s ID) to path
             last_user_id = path[-1]
-            # If we haven't visited this user yet...
-            if last_user_id not in visited:
-                # Visit the user by assigning path to their key [value] pair
-                visited[last_user_id] = path
-                # For every friendship contained in this user's dictionary...
-                for friend in self.friendships[last_user_id]:
+            # If we haven't explored this connection yet...
+            if last_user_id not in connections:
+                # Check out mutual friends by assigning path to their key [value] pair
+                connections[last_user_id] = path
+                # For every mutual friend in this user's friends list (friendships)...
+                for mutual_friend in self.friendships[last_user_id]:
                     # If this particular friend hasn't been visited yet...
-                    if friend not in visited:
+                    if mutual_friend not in connections:
                         # Assign a path list to the newly explored path
                         new_path = list(path)
-                        # Append each friend to the new path
-                        new_path.append(friend)
+                        # Append each mutual friend to the new path
+                        new_path.append(mutual_friend)
                         # Add the new path to our queue
                         q.enqueue(new_path)
         # After all the loops and conditionals finish their work, return visited
-        return visited
+        return connections
 
 
 if __name__ == '__main__':
