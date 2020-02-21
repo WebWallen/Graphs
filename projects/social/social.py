@@ -1,4 +1,5 @@
 import random
+import time
 
 class Queue:
     def __init__(self):
@@ -147,10 +148,50 @@ class SocialGraph:
         # After all the loops and conditionals finish their work, return visited
         return connections
 
+    def populate_graph_linear(self, num_users, avg_friendships):
+        self.last_id = 0
+        self.users = {}
+        self.friendships = {}
+
+        for i in range(num_users):
+            self.add_user(f"User {i+1}")
+            # Multiply average friends and num users, assign to variable
+            friendships_to_create = avg_friendships * num_users
+            # Set friendships/collisions variables to 0 so we can increment
+            friendships = 0
+            collisions = 0
+            # While there are less friendships than we need to create...
+            while friendships < friendships_to_create:
+                # Choose/assign a random user and friend by calling randint
+                user_id = random.randint(1, self.last_id)
+                friend_id = random.randint(1, self.last_id)
+                # If the user and friend aren't connected, assign their friendship
+                if self.add_friendship(user_id, friend_id):
+                    # Increment friendships +2 to account for both
+                    friendships += 2
+                # Otherwise, they are already friends, so we need to...
+                else:
+                    # Increment collisions +1
+                    collisions += 1
+                    # Print the total amount of collisions for testing purposes
+                    print(f"COLLISIONS: {collisions}")
 
 if __name__ == '__main__':
+    num_users = 1000
+    avg_friendships = 200
+
     sg = SocialGraph()
-    sg.populate_graph(10, 2)
-    print(sg.friendships)
-    connections = sg.get_all_social_paths(1)
-    print('Connections: ', connections)
+    start_time = time.time()
+    sg.populate_graph(num_users, avg_friendships)
+    end_time = time.time()
+    print (f"\nQuadratic runtime: {end_time - start_time} seconds")
+    
+    sg = SocialGraph()
+    start_time = time.time()
+    sg.populate_graph_linear(num_users, avg_friendships)
+    end_time = time.time()
+    print (f"\nLinear runtime: {end_time - start_time} seconds")
+    
+    # print(sg.friendships)
+    # connections = sg.get_all_social_paths(1)
+    # print('Connections: ', connections)
